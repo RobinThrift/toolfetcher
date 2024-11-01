@@ -1,0 +1,43 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+    "dependencyDashboard": true,
+
+    "commitMessagePrefix": "deps({{#if isGroup}}{{groupName}}{{else}}{{depName}}{{/if}}): ",
+    "commitMessageAction": "Upgrade",
+    "commitMessageLowerCase": "never",
+    "commitBodyTable": true,
+
+    "labels": ["dependencies"],
+    "prHourlyLimit": 50,
+    "prConcurrentLimit": 50,
+
+    "vulnerabilityAlerts": { "enabled": true },
+    "osvVulnerabilityAlerts": true,
+
+    "lockFileMaintenance": { "enabled": true },
+    "enabledManagers": ["gomod", "github-actions", "custom.regex"],
+
+    "packageRules": [
+        { "matchDatasources": ["go"], "addLabels": ["go"] },
+
+        { "matchManagers": ["github-actions"], "addLabels": ["github-actions"] },
+
+        {
+            "matchManagers": ["custom.regex"],
+            "addLabels": ["tools"],
+            "matchFileNames": ["**/TOOL_VERSIONS"]
+        }
+    ],
+
+    "customManagers": [
+        {
+            "customType": "regex",
+            "fileMatch": ["^.tools/TOOL_VERSIONS$"],
+            "matchStrings": [
+                "(?<depName>.+?): *(?<datasource>github-releases|go)://(?<packageName>.+?)@(?<currentValue>[\\d\\.]+)"
+            ],
+            "versioningTemplate": "semver"
+        }
+    ]
+}
